@@ -1,0 +1,61 @@
+{
+  "skill_name": "openai-api",
+  "evals": [
+    {
+      "id": 1,
+      "name": "python-basic-chat-with-secrets",
+      "prompt": "I just got an OpenAI API key — it's saved as OPENAI_API_KEY in my .env file. Write me a small Python script that asks the user for a question, sends it to OpenAI, and prints the answer. Project root has nothing in it yet besides the .env. I want to add a requirements.txt and the script.",
+      "expected_output": "Uses openai SDK, Responses API with gpt-5.2, reads key from env (not hardcoded), creates / verifies .gitignore excludes .env, never prints the key value, uses python-dotenv or os.environ. Does NOT use chat.completions.create.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "typescript-streaming-nextjs-route",
+      "prompt": "I'm building a Next.js 14 app (app router) and I want to add a /api/chat route that streams OpenAI's response back to the browser as Server-Sent Events. The frontend will read it with fetch + a TextDecoder. What does the route handler look like?",
+      "expected_output": "Uses openai Node SDK, Responses API with gpt-5.2, stream:true or responses.stream(), proper SSE formatting (data: ... \\n\\n), reads OPENAI_API_KEY from server-side env (NOT NEXT_PUBLIC_), notes browser-direct-call is unsafe.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "name": "cost-optimization-prompt-caching",
+      "prompt": "Our OpenAI bill is killing us. We have a Python customer support bot that calls gpt-5.2 about 10,000 times a day. Every call includes a ~4000-token system prompt with our company's product catalog. Help me cut the cost.",
+      "expected_output": "Explains prompt caching gives 90% off cached input on gpt-5.2 (cached rate $0.175/M vs $1.75/M). Identifies the system-prompt prefix as cacheable since >1024 tokens. Warns about silent invalidators (timestamps in system prompt, tool list mutation). Suggests verifying via usage.input_tokens_details.cached_tokens. May suggest prompt_cache_key for multi-tenant. Does NOT suggest a cheaper model as the primary fix.",
+      "files": []
+    },
+    {
+      "id": 4,
+      "name": "python-tool-use-agent",
+      "prompt": "Build a Python agent that, given a city name, can use a fake `get_weather(city)` function and tell the user about today's weather. Use OpenAI. The function should return a hardcoded dict for now. I want it to actually loop and call the function then synthesize a final answer.",
+      "expected_output": "Defines tools with flat shape (no `function:` wrapper). Uses Responses API. Properly loops while function_call items present, parses arguments with json.loads, matches by call_id, sends function_call_output items back with previous_response_id. Uses gpt-5.2 by default. Defines TOOLS at module scope.",
+      "files": []
+    },
+    {
+      "id": 5,
+      "name": "csharp-reasoning-with-key-from-env",
+      "prompt": "Show me how to call OpenAI's GPT-5 with high reasoning effort from a C# .NET 8 console app. I want to ask it 'How many r's are in strawberry?' and print the answer plus the reasoning summary. The API key is in an environment variable.",
+      "expected_output": "Uses OpenAI NuGet package (v2.x), suppresses OPENAI001, uses ResponsesClient + ReasoningOptions with effort=High, reads Environment.GetEnvironmentVariable(\"OPENAI_API_KEY\") (not hardcoded), catches ClientResultException not per-status. Uses gpt-5.2 or gpt-5.5 model.",
+      "files": []
+    },
+    {
+      "id": 6,
+      "name": "audio-transcription-long-file",
+      "prompt": "I have a 90-minute MP3 recording of a meeting. I want to transcribe it with timestamps using OpenAI's API in Python. The file is bigger than 25MB. Walk me through the right approach.",
+      "expected_output": "Identifies the 25MB byte limit (not duration). Suggests pre-compression with ffmpeg (e.g., 64kbps mono MP3) OR splitting on silence. Uses gpt-4o-transcribe (not whisper-1). Uses verbose_json + timestamp_granularities=['segment','word']. May mention gpt-4o-transcribe-diarize if speakers matter. Handles file reading properly.",
+      "files": []
+    },
+    {
+      "id": 7,
+      "name": "typescript-structured-extraction",
+      "prompt": "I have a TypeScript node app where users paste messy contact info text ('hey im sarah you can reach me at sarah.j@example.com or 415-555-0123, im in SF') and I want to extract a structured contact object with name, email, phone, city. Use OpenAI with Zod validation.",
+      "expected_output": "Uses zodTextFormat helper, Zod schema, Responses API (text.format flat structure - NOT response_format), strict mode, gpt-5.2 or gpt-5.4-nano. Reads OPENAI_API_KEY from env. Properly handles refusal case.",
+      "files": []
+    },
+    {
+      "id": 8,
+      "name": "migration-from-chat-completions",
+      "prompt": "I have this existing Python code:\n\n```python\nfrom openai import OpenAI\nclient = OpenAI(api_key='sk-proj-abc123def456')\n\nresponse = client.chat.completions.create(\n    model='gpt-4o',\n    messages=[\n        {'role': 'system', 'content': 'You are a helpful assistant.'},\n        {'role': 'user', 'content': 'What is the capital of France?'},\n    ],\n    response_format={'type': 'json_schema', 'json_schema': {'name': 'answer', 'schema': {'type': 'object', 'properties': {'capital': {'type': 'string'}}, 'required': ['capital']}}}\n)\nprint(response.choices[0].message.content)\n```\n\nIs there anything wrong with it? Should I update it?",
+      "expected_output": "FLAGS the hardcoded API key as a critical security issue (do this FIRST, even before discussing migration). Recommends migrating to Responses API: messages -> input+instructions, response_format -> text.format (flat, no json_schema wrapper), choices[0].message.content -> output_text. Suggests gpt-5.2 instead of gpt-4o. Adds strict:true and additionalProperties:false.",
+      "files": []
+    }
+  ]
+}
